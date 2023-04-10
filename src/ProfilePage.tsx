@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
+import { Form, Button, Row, Col, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
+import { FaUser, FaCalendarAlt, FaBuilding, FaPen } from 'react-icons/fa';
 import './ProfilePage.css';
+
+
 
 function ProfilePage() {
     const [name, setName] = useState("");
@@ -17,7 +21,13 @@ function ProfilePage() {
     ]);
   
 
-    function saveProfile(profileData: any) {
+    function saveProfile() {
+        const profileData = {
+            name,
+            profilePicUrl,
+            age,
+            workExperiences,
+          };
         // code to save profile data to database or API
         console.log("Profile data saved:", profileData);
     }
@@ -33,20 +43,106 @@ function ProfilePage() {
           }]
     )
     }
+    const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
+      };
+      
+      const handleProfilePicUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setProfilePicUrl(event.target.value);
+      };
+      
+      const handleAgeChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setAge(event.target.value);
+      };
+      
+      const handleStartDateChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+        const newWorkExperiences = [...workExperiences];
+        newWorkExperiences[index] = {
+          ...newWorkExperiences[index],
+          startDate: event.target.value,
+        };
+        setWorkExperiences(newWorkExperiences);
+      };
+      
+      const handleEndDateChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+        const newWorkExperiences = [...workExperiences];
+        newWorkExperiences[index] = {
+          ...newWorkExperiences[index],
+          endDate: event.target.value,
+        };
+        setWorkExperiences(newWorkExperiences);
+      };
+      
+      const handleJobTitleChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+        const newWorkExperiences = [...workExperiences];
+        newWorkExperiences[index] = {
+          ...newWorkExperiences[index],
+          jobTitle: event.target.value,
+        };
+        setWorkExperiences(newWorkExperiences);
+      };
+      
+      const handleCompanyChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+        const newWorkExperiences = [...workExperiences];
+        newWorkExperiences[index] = {
+          ...newWorkExperiences[index],
+          company: event.target.value,
+        };
+        setWorkExperiences(newWorkExperiences);
+      };
+      
+      const handleCompanyLogoUrlChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+        const newWorkExperiences = [...workExperiences];
+        newWorkExperiences[index] = {
+          ...newWorkExperiences[index],
+          companyLogoUrl: event.target.value,
+        };
+        setWorkExperiences(newWorkExperiences);
+      };
+      
+      const handleJobDescriptionChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+        const newWorkExperiences = [...workExperiences];
+        newWorkExperiences[index] = {
+          ...newWorkExperiences[index],
+          jobDescription: event.target.value,
+        };
+        setWorkExperiences(newWorkExperiences);
+      };
 
-    return (
+      const handleAddWorkExperience = () => {
+        setWorkExperiences([
+          ...workExperiences,
+          {
+            startDate: "",
+            endDate: "",
+            jobTitle: "",
+            company: "",
+            companyLogoUrl: "",
+            jobDescription: "",
+          },
+        ]);
+      };
+      
+      const handleRemoveWorkExperience = (index: number) => {
+        const newWorkExperiences = [...workExperiences];
+        newWorkExperiences.splice(index, 1);
+        setWorkExperiences(newWorkExperiences);
+      };
+      
+      return (
         <div className="profile-page-container">
           <div className="profile-header">
             <div className="profile-avatar">
               <img src={profilePicUrl} alt="Profile Avatar" />
             </div>
             <div className="profile-info">
-              <h1 className="profile-name">
-                <input type="text" defaultValue={name} />
-              </h1>
+              <p className="profile-name">
+                <Form.Label htmlFor="age">Name: </Form.Label>
+                <Form.Control type="text" defaultValue={name} />
+              </p>
               <p className="profile-age">
-                <label htmlFor="age">Age: </label>
-                <input type="number" id="age" name="age" defaultValue={age} />
+                <Form.Label htmlFor="age">Age: </Form.Label>
+                <Form.Control type="number" id="age" name="age" defaultValue={age} />
               </p>
             </div>
           </div>
@@ -57,15 +153,15 @@ function ProfilePage() {
                 <li key={index}>
                   <div className="work-experience">
                     <div className="work-experience-dates">
-                      <label htmlFor={`start-date-${index}`}>Start Date: </label>
-                      <input
+                      <Form.Label htmlFor={`start-date-${index}`}>Start Date: </Form.Label>
+                      <Form.Control
                         type="date"
                         id={`start-date-${index}`}
                         name={`start-date-${index}`}
                         defaultValue={experience.startDate}
                       />
-                      <label htmlFor={`end-date-${index}`}>End Date: </label>
-                      <input
+                      <Form.Label htmlFor={`end-date-${index}`}>End Date: </Form.Label>
+                      <Form.Control
                         type="date"
                         id={`end-date-${index}`}
                         name={`end-date-${index}`}
@@ -73,45 +169,51 @@ function ProfilePage() {
                       />
                     </div>
                     <div className="work-experience-info">
-                      <label htmlFor={`job-title-${index}`}>Job Title: </label>
-                      <input
+                      <Form.Label htmlFor={`job-title-${index}`}>Job Title: </Form.Label>
+                      <Form.Control
                         type="text"
                         id={`job-title-${index}`}
                         name={`job-title-${index}`}
                         defaultValue={experience.jobTitle}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => handleJobTitleChange(event, index)}
                       />
-                      <label htmlFor={`company-${index}`}>Company: </label>
-                      <input
+                      <Form.Label htmlFor={`company-${index}`}>Company: </Form.Label>
+                      <Form.Control
                         type="text"
                         id={`company-${index}`}
                         name={`company-${index}`}
                         defaultValue={experience.company}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => handleCompanyChange(event, index)}
                       />
-                      <label htmlFor={`company-logo-${index}`}>Company Logo: </label>
-                      <input
+                      <Form.Label htmlFor={`company-logo-${index}`}>Company Logo URL: </Form.Label>
+                      <Form.Control
                         type="text"
                         id={`company-logo-${index}`}
                         name={`company-logo-${index}`}
                         defaultValue={experience.companyLogoUrl}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => handleCompanyLogoUrlChange(event, index)}
                       />
-                      <label htmlFor={`job-description-${index}`}>Job Description: </label>
-                      <textarea
+                      <Form.Label htmlFor={`job-description-${index}`}>Job Description: </Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
                         id={`job-description-${index}`}
                         name={`job-description-${index}`}
                         defaultValue={experience.jobDescription}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => handleJobDescriptionChange(event, index)}
                       />
+                      <Button variant="danger" onClick={() => handleRemoveWorkExperience(index)}>Remove Work Experience</Button>
                     </div>
                   </div>
                 </li>
               ))}
             </ul>
-            <button onClick={() => addNewExperience()}>Add Work Experience</button>
-          </div>
-          <div className="profile-footer">
-            <button onClick={saveProfile}>Save Profile</button>
+            <Button variant="primary" onClick={handleAddWorkExperience}>Add Work Experience</Button>
+            <Button variant="success" onClick={saveProfile}>Save Profile</Button>
           </div>
         </div>
       );
+      
 }
   export default ProfilePage; 
   
