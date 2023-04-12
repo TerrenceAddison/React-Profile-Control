@@ -2,6 +2,8 @@ import React, { ChangeEvent } from 'react';
 import ProfileHeader from './ProfileHeader';
 import ProfileContent from './ProfileContent';
 import profilePic from './img/placeholder.jpg';
+import { Button, Container, Nav, Navbar } from 'react-bootstrap';
+import './ProfilePage.css'
 
 interface ProfilePageState {
   name: string;
@@ -155,7 +157,12 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
       render() {
         const { name, age, profilePic, workExperiences } = this.state;
         return (
-          <div className="profile-page">
+          <div>
+            <Navbar bg="dark">
+              <Container>
+                <Navbar.Brand className = "navbar-txt"><h1>Profile Page</h1></Navbar.Brand>
+              </Container>
+            </Navbar>
             <ProfileHeader
               profilePic={profilePic}
               name={name}
@@ -175,7 +182,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
               handleAddWorkExperience={this.handleAddWorkExperience}
               handleRemoveWorkExperience={this.handleRemoveWorkExperience}
             />
-            <button onClick={this.saveProfile}>Save Profile</button>
+            <Button className="save-btn" variant="primary" onClick={this.saveProfile}>Save Profile</Button>
           </div>
         );
       }

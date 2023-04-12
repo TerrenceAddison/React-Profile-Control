@@ -1,3 +1,7 @@
+.profile-header {
+    border-bottom: 5px solid #e1e8ed;
+    padding: 20px 15px;
+}
 img {
     height: 300px;
 }

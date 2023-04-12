@@ -109,9 +109,9 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
                 )}
               </Col>
             </Row>
-            <Button variant="danger" onClick={() => handleRemoveWorkExperience(index)}>
+            <Button className="remove-btn" variant="danger" onClick={() => handleRemoveWorkExperience(index)}>
                 Remove
-              </Button>
+            </Button>
           </div>
           )
     }

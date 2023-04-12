@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from 'react-bootstrap';
+import { Col, Form, Row } from 'react-bootstrap';
 import './ProfileHeader.css'
 
 interface ProfileHeaderProps {
@@ -33,16 +33,16 @@ class ProfileHeader extends React.Component<ProfileHeaderProps, {}> {
             Profile Picture
           </div>
         </div>
-        <div className="profile-info">
-          <p className="profile-name">
+        <Row>
+          <Col>
             <Form.Label htmlFor="name">Name: </Form.Label>
             <Form.Control type="text" id="name" name="name" defaultValue={name} onChange={handleNameChange} />
-          </p>
-          <p className="profile-age">
+          </Col>
+          <Col>
             <Form.Label htmlFor="age">Age: </Form.Label>
             <Form.Control type="number" id="age" name="age" defaultValue={age} onChange={handleAgeChange} />
-          </p>
-        </div>
+          </Col>
+        </Row>
       </div>
     );
   }
