@@ -160,7 +160,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
           <div>
             <Navbar bg="dark">
               <Container>
-                <Navbar.Brand className = "navbar-txt"><h1>Profile Page</h1></Navbar.Brand>
+                <Navbar.Brand><h1 className = "navbar-txt">Profile Page</h1></Navbar.Brand>
               </Container>
             </Navbar>
             <ProfileHeader
