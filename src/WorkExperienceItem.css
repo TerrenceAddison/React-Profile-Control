@@ -1,0 +1,16 @@
+.work-experience
+{
+    padding: 25px;
+}
+
+.job-description-textarea {
+    height: 300px;
+}
+
+.company-logo img {
+    height: 300px;
+}
+
+.company-logo {
+    padding-top: 30px;
+}

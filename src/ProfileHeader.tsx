@@ -1,13 +1,14 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
+import './ProfileHeader.css'
 
 interface ProfileHeaderProps {
-  profilePicUrl: string;
+  profilePic: string;
   name: string;
   age: number;
   handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleAgeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleProfilePicUrlChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleProfilePicChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 class ProfileHeader extends React.Component<ProfileHeaderProps, {}> {
@@ -17,13 +18,20 @@ class ProfileHeader extends React.Component<ProfileHeaderProps, {}> {
 
 
   render() {
-    const { profilePicUrl, name, age, handleNameChange, handleAgeChange, handleProfilePicUrlChange } = this.props;
+    const { profilePic, name, age, handleNameChange, handleAgeChange, handleProfilePicChange } = this.props;
 
     return (
       <div className="profile-header">
         <div className="profile-avatar">
-          <img src={profilePicUrl} alt="Profile Avatar" />
-          <Form.Control type="text" id="profilePicUrl" name="profilePicUrl" defaultValue={profilePicUrl} onChange={handleProfilePicUrlChange} />
+          <div className="avatar-wrapper">
+            <Form.Label htmlFor="profilePic">
+            <img src={profilePic} alt="Profile Avatar" />
+            </Form.Label>
+            <Form.Control type="file" id="profilePic" name="profilePic" onChange={handleProfilePicChange} accept="image/*" className="d-none" />
+          </div>
+          <div className="avatar-text">
+            Profile Picture
+          </div>
         </div>
         <div className="profile-info">
           <p className="profile-name">

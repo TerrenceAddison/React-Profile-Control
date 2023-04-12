@@ -1,5 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import WorkExperienceItem from './WorkExperienceItem';
+import './ProfileContent.css';
 
 
 interface WorkExperience {
@@ -7,7 +9,7 @@ interface WorkExperience {
     endDate: string;
     jobTitle: string;
     company: string;
-    companyLogoUrl: string;
+    companyLogo: string;
     jobDescription: string;
   }
   
@@ -17,7 +19,7 @@ interface WorkExperience {
     handleEndDateChange: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
     handleJobTitleChange: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
     handleCompanyChange: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
-    handleCompanyLogoUrlChange: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
+    handleCompanyLogoChange: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
     handleJobDescriptionChange: (event: ChangeEvent<HTMLTextAreaElement>, index: number) => void;
     handleRemoveWorkExperience: (index: number) => void;
     handleAddWorkExperience: () => void;
@@ -31,7 +33,7 @@ class ProfileContent extends React.Component<ProfileContentProps> {
             handleEndDateChange,
             handleJobTitleChange,
             handleCompanyChange,
-            handleCompanyLogoUrlChange,
+            handleCompanyLogoChange,
             handleJobDescriptionChange,
             handleRemoveWorkExperience,
             handleAddWorkExperience
@@ -40,70 +42,19 @@ class ProfileContent extends React.Component<ProfileContentProps> {
           return (
             <div className="profile-content">
               <h2>Work Experiences</h2>
-              <ul className="work-experiences">
                 {workExperiences.map((experience, index) => (
-                  <li key={index}>
-                    <div className="work-experience">
-                      <div className="work-experience-dates">
-                        <Form.Label htmlFor={`start-date-${index}`}>Start Date: </Form.Label>
-                        <Form.Control
-                          type="date"
-                          id={`start-date-${index}`}
-                          name={`start-date-${index}`}
-                          value={experience.startDate}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) => handleStartDateChange(event, index)}
-                          />
-                        <Form.Label htmlFor={`end-date-${index}`}>End Date: </Form.Label>
-                        <Form.Control
-                          type="date"
-                          id={`end-date-${index}`}
-                          name={`end-date-${index}`}
-                          value={experience.endDate}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) => handleEndDateChange(event, index)}
-                          />
-                      </div>
-                      <div className="work-experience-details">
-                        <Form.Label htmlFor={`job-title-${index}`}>Job Title: </Form.Label>
-                        <Form.Control
-                          type="text"
-                          id={`job-title-${index}`}
-                          name={`job-title-${index}`}
-                          value={experience.jobTitle}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) => handleJobTitleChange(event, index)}
-                          />
-                        <Form.Label htmlFor={`company-${index}`}>Company: </Form.Label>
-                        <Form.Control
-                          type="text"
-                          id={`company-${index}`}
-                          name={`company-${index}`}
-                          value={experience.company}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) => handleCompanyChange(event, index)}
-                          />
-                        <Form.Label htmlFor={`company-logo-url-${index}`}>Company Logo URL: </Form.Label>
-                        <Form.Control
-                          type="text"
-                          id={`company-logo-url-${index}`}
-                          name={`company-logo-url-${index}`}
-                          value={experience.companyLogoUrl}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) => handleCompanyLogoUrlChange(event, index)}
-                          />
-                        <Form.Label htmlFor={`job-description-${index}`}>Job Description: </Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          rows={3}
-                          id={`job-description-${index}`}
-                          name={`job-description-${index}`}
-                          value={experience.jobDescription}
-                          onChange={(event: ChangeEvent<HTMLTextAreaElement>) => handleJobDescriptionChange(event, index)}
-                          />
-                        <Button variant="danger" onClick={() => handleRemoveWorkExperience(index)}>
-                          Remove
-                        </Button>
-                      </div>
-                    </div>
-                  </li>
+                  <WorkExperienceItem
+                    index={index}
+                    experience={experience}
+                    handleStartDateChange={handleStartDateChange}
+                    handleEndDateChange={handleEndDateChange}
+                    handleJobTitleChange={handleJobTitleChange}
+                    handleCompanyChange={handleCompanyChange}
+                    handleCompanyLogoChange={handleCompanyLogoChange}
+                    handleJobDescriptionChange={handleJobDescriptionChange}
+                    handleRemoveWorkExperience={handleRemoveWorkExperience}
+                  />
                 ))}
-              </ul>
               <Button variant="secondary" onClick={handleAddWorkExperience}>
                 Add Work Experience
               </Button>

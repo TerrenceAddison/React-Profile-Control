@@ -1,12 +1,12 @@
 import React, { ChangeEvent } from 'react';
-import './ProfilePage.css';
 import ProfileHeader from './ProfileHeader';
 import ProfileContent from './ProfileContent';
+import profilePic from './img/placeholder.jpg';
 
 interface ProfilePageState {
   name: string;
   age: number;
-  profilePicUrl: string;
+  profilePic: string;
   workExperiences: WorkExperience[];
 }
 
@@ -15,7 +15,7 @@ interface WorkExperience {
   endDate: string;
   jobTitle: string;
   company: string;
-  companyLogoUrl: string;
+  companyLogo: string;
   jobDescription: string;
 }
 
@@ -25,14 +25,14 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
       this.state = {
         name: 'John Doe',
         age: 30,
-        profilePicUrl: '',
+        profilePic: profilePic,
         workExperiences: [
           {
             startDate: '2020-01-01',
             endDate: '2021-01-01',
             jobTitle: 'Software Engineer',
             company: 'Acme Inc.',
-            companyLogoUrl: 'https://www.example.com/acme-logo.png',
+            companyLogo: '',
             jobDescription:
               'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod enim sed eros ullamcorper tincidunt. Nulla facilisi. Proin interdum nulla et sapien accumsan, vel facilisis dolor tincidunt. Duis dapibus libero ut tellus malesuada tincidunt.',
           },
@@ -42,10 +42,10 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
   
 
     saveProfile = () => {
-      const { name, profilePicUrl, age, workExperiences } = this.state;
+      const { name, profilePic, age, workExperiences } = this.state;
       const profileData = {
         name,
-        profilePicUrl,
+        profilePic,
         age,
         workExperiences,
       };
@@ -57,8 +57,16 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
       this.setState({ name: event.target.value });
     };
 
-    handleProfilePicUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
-      this.setState({ profilePicUrl: event.target.value });
+    handleProfilePicChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          let newProfilePic = e.target?.result as string;
+          this.setState({ profilePic: newProfilePic });
+        };
+        reader.readAsDataURL(file);
+      }
     };
 
     handleAgeChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -101,14 +109,19 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
       this.setState({ workExperiences: newWorkExperiences });
     };
       
-      handleCompanyLogoUrlChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
-        const newWorkExperiences = [...this.state.workExperiences];
-        newWorkExperiences[index] = {
-          ...newWorkExperiences[index],
-          companyLogoUrl: event.target.value,
+    handleCompanyLogoChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+      const newWorkExperiences = [...this.state.workExperiences];
+      const file = event.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          newWorkExperiences[index].companyLogo = e.target?.result as string;
+          this.setState({ workExperiences: newWorkExperiences });
         };
-        this.setState({ workExperiences: newWorkExperiences });
-      };
+        reader.readAsDataURL(file);
+      }
+    };
+    
       
       handleJobDescriptionChange = (event: ChangeEvent<HTMLTextAreaElement>, index: number) => {
         const newWorkExperiences = [...this.state.workExperiences];
@@ -127,7 +140,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
             endDate: "",
             jobTitle: "",
             company: "",
-            companyLogoUrl: "",
+            companyLogo: "",
             jobDescription: "",
           },
         ];
@@ -140,15 +153,15 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
         this.setState({ workExperiences: newWorkExperiences });
       };
       render() {
-        const { name, age, profilePicUrl, workExperiences } = this.state;
+        const { name, age, profilePic, workExperiences } = this.state;
         return (
           <div className="profile-page">
             <ProfileHeader
-              profilePicUrl={profilePicUrl}
+              profilePic={profilePic}
               name={name}
               age={age}
               handleNameChange={this.handleNameChange}
-              handleProfilePicUrlChange={this.handleProfilePicUrlChange}
+              handleProfilePicChange={this.handleProfilePicChange}
               handleAgeChange={this.handleAgeChange}
             />
             <ProfileContent
@@ -157,7 +170,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
               handleEndDateChange={this.handleEndDateChange}
               handleJobTitleChange={this.handleJobTitleChange}
               handleCompanyChange={this.handleCompanyChange}
-              handleCompanyLogoUrlChange={this.handleCompanyLogoUrlChange}
+              handleCompanyLogoChange={this.handleCompanyLogoChange}
               handleJobDescriptionChange={this.handleJobDescriptionChange}
               handleAddWorkExperience={this.handleAddWorkExperience}
               handleRemoveWorkExperience={this.handleRemoveWorkExperience}
