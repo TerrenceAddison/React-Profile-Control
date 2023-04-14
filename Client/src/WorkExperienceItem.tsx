@@ -47,7 +47,10 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
                   name={`job-title-${index}`}
                   value={experience.jobTitle}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => handleJobTitleChange(event, index)}
+                  required
+                  isInvalid={experience.jobTitle === ''}
                 />
+                <Form.Control.Feedback type="invalid">Job Title is Required</Form.Control.Feedback>
               </Col>
 
               <Col>
@@ -58,9 +61,11 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
                   name={`start-date-${index}`}
                   value={experience.startDate}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => handleStartDateChange(event, index)}
+                  required
+                  isInvalid={experience.startDate > experience.endDate}
                 />
+                <Form.Control.Feedback type="invalid">Start Date must be before End Date</Form.Control.Feedback>
               </Col>
-
               <Col>
                 <Form.Label htmlFor={`end-date-${index}`}>End Date: </Form.Label>
                 <Form.Control
@@ -69,7 +74,10 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
                   name={`end-date-${index}`}
                   value={experience.endDate}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => handleEndDateChange(event, index)}
+                  required
+                  isInvalid={experience.endDate < experience.startDate}
                   />
+                <Form.Control.Feedback type="invalid">End Date must be after Start Date</Form.Control.Feedback>
               </Col>
             </Row>
             <Row>
@@ -81,7 +89,10 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
                     name={`company-${index}`}
                     value={experience.company}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => handleCompanyChange(event, index)}
+                    required
+                    isInvalid={experience.company === ''}
                   />
+                  <Form.Control.Feedback type="invalid">Company is Required</Form.Control.Feedback>
                   <Form.Label htmlFor={`job-description-${index}`}>Job Description: </Form.Label>
                   <Form.Control
                     as="textarea"

@@ -36,11 +36,13 @@ class ProfileHeader extends React.Component<ProfileHeaderProps, {}> {
         <Row>
           <Col>
             <Form.Label htmlFor="name">Name: </Form.Label>
-            <Form.Control type="text" id="name" name="name" value={name} onChange={handleNameChange} />
+            <Form.Control type="text" id="name" name="name" value={name} onChange={handleNameChange} required isInvalid={name === ''}/>
+            <Form.Control.Feedback type="invalid">Name is required.</Form.Control.Feedback>
           </Col>
           <Col>
             <Form.Label htmlFor="age">Age: </Form.Label>
-            <Form.Control type="text" id="age" name="age" value={age} onChange={handleAgeChange} />
+            <Form.Control type="text" id="age" name="age" value={age} onChange={handleAgeChange} required isInvalid={age <= 0}/>
+            <Form.Control.Feedback type="invalid">Age cannot be 0 or less.</Form.Control.Feedback>
           </Col>
         </Row>
       </div>

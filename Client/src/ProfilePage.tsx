@@ -1,8 +1,8 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useRef } from 'react';
 import ProfileHeader from './ProfileHeader';
 import ProfileContent from './ProfileContent';
 import profilePic from './img/placeholder.jpg';
-import { Button, Container, Nav, Navbar } from 'react-bootstrap';
+import { Button, Container, Form, Nav, Navbar } from 'react-bootstrap';
 import './ProfilePage.css'
 import api from "./api";
 
@@ -26,8 +26,10 @@ interface WorkExperience {
 }
 
 class ProfilePage extends React.Component<{}, ProfilePageState> {
+    private formRef = React.createRef<HTMLFormElement>();
     constructor(props: {}) {
       super(props);
+      this.formRef = React.createRef();
       // sample data
       this.state = {
         name: 'John Doe',
@@ -86,34 +88,54 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
       });
     }
 
-    saveProfile = () => {
-      const { name, profilePic, age, workExperiences } = this.state;
-      const profileData = {
-        name,
-        profilePic,
-        age,
-        workExperiences,
-      };
-      console.log(profileData);
-      if(this.state.new) {
-        for(let i = 0; i < workExperiences.length; i++) {
-          workExperiences[i].id = i+1;
+    saveProfile = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      const isValid = this.areDatesValid();
+      if (!isValid) {
+        console.log("invalid form");
+        event.stopPropagation();
+      }
+      else{
+        const { name, profilePic, age, workExperiences } = this.state;
+        const profileData = {
+          name,
+          profilePic,
+          age,
+          workExperiences,
+        };
+        console.log(profileData);
+        if(this.state.new) {
+          for(let i = 0; i < workExperiences.length; i++) {
+            workExperiences[i].id = i+1;
+          }
+          api.post('/profile', profileData).then((res) => {
+            console.log(res);
+            this.setState({new: false, id: res.data.id}); 
+            window.alert("Profile saved successfully!");
+          });
         }
-        api.post('/profile', profileData).then((res) => {
-          console.log(res);
-          this.setState({new: false, id: res.data.id}); 
-          window.alert("Profile saved successfully!");
-        });
+        else {
+          api.patch(`/profile/${this.state.id}`, profileData).then((res) => {
+            console.log(res);
+            window.alert("Profile saved successfully!");
+          });
+        }
       }
-      else {
-        api.patch(`/profile/${this.state.id}`, profileData).then((res) => {
-          console.log(res);
-          window.alert("Profile saved successfully!");
-        });
-      }
-
-
     };
+
+    
+  areDatesValid = () => {
+    let isDatesValid = true;
+    this.state.workExperiences.forEach((experience, index) => {
+      const startDateControl = document.getElementById(`start-date-${index}`);
+      const endDateControl = document.getElementById(`end-date-${index}`);
+      if (experience.startDate > experience.endDate) {
+        isDatesValid = false;
+      }
+    });
+
+    return isDatesValid;
+  };
 
     handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
       this.setState({ name: event.target.value });
@@ -214,10 +236,11 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
         newWorkExperiences.splice(index, 1);
         this.setState({ workExperiences: newWorkExperiences });
       };
+
       render() {
         const { name, age, profilePic, workExperiences } = this.state;
         return (
-          <div>
+          <Form ref={this.formRef} onSubmit={this.saveProfile.bind(this)}>
             <Navbar bg="dark">
               <Container>
                 <Navbar.Brand><h1 className = "navbar-txt">Profile Page</h1></Navbar.Brand>
@@ -242,8 +265,9 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
               handleAddWorkExperience={this.handleAddWorkExperience}
               handleRemoveWorkExperience={this.handleRemoveWorkExperience}
             />
-            <Button className="save-btn" variant="primary" onClick={this.saveProfile}>Save Profile</Button>
-          </div>
+            <Button className="save-btn" type="submit" variant="primary">Save Profile</Button>
+          </Form>
+
         );
       }
       
