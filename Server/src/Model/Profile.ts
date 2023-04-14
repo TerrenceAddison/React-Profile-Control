@@ -35,13 +35,13 @@ export class Profile extends Model {
 
   @Column({
     field: Profile.PROFILE_PROFILE_PIC,
-    type: DataType.STRING,
+    type: DataType.STRING(500000),
     allowNull: false,
   })
   profile_pic!: string;
 
   @HasMany(() => WorkExperience, { foreignKey: "user_id" })
-  workExperiences!: WorkExperience[];
+  work_experiences!: WorkExperience[];
 
 
 }

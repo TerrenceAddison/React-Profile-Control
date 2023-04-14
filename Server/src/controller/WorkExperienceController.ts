@@ -7,13 +7,13 @@ class WorkExperienceController {
     {
         try{
             const new_workExperience = new WorkExperience();
-            new_workExperience.user_id = req.body.user_id;
-            new_workExperience.start_date = req.body.start_date;
-            new_workExperience.end_date = req.body.end_date;
-            new_workExperience.job_title = req.body.job_title;
+            new_workExperience.user_id = req.body.userId;
+            new_workExperience.start_date = req.body.startDate;
+            new_workExperience.end_date = req.body.endDate;
+            new_workExperience.job_title = req.body.jobTitle;
             new_workExperience.company = req.body.company;
-            new_workExperience.company_logo = req.body.company_logo;
-            new_workExperience.description = req.body.description;
+            new_workExperience.company_logo = req.body.companyLogo;
+            new_workExperience.description = req.body.jobDescription;
 
             await new WorkExperienceRepo().save(new_workExperience);
             res.status(201).json({
@@ -35,13 +35,13 @@ class WorkExperienceController {
           const new_workExperience = new WorkExperience();
     
           new_workExperience.id = id;
-          new_workExperience.user_id = req.body.user_id;
-          new_workExperience.start_date = req.body.start_date;
-          new_workExperience.end_date = req.body.end_date;
-          new_workExperience.job_title = req.body.job_title;
+          new_workExperience.user_id = req.body.userId;
+          new_workExperience.start_date = req.body.startDate;
+          new_workExperience.end_date = req.body.endDate;
+          new_workExperience.job_title = req.body.jobTitle;
           new_workExperience.company = req.body.company;
-          new_workExperience.company_logo = req.body.company_logo;
-          new_workExperience.description = req.body.description;
+          new_workExperience.company_logo = req.body.companyLogo;
+          new_workExperience.description = req.body.jobDescription;
     
           await new WorkExperienceRepo().update(new_workExperience);
     
@@ -94,7 +94,7 @@ class WorkExperienceController {
     }
     async findByUserId(req: Request, res: Response) {
         try {
-            let user_id = parseInt(req.params["user_id"]);
+            let user_id = parseInt(req.params["userId"]);
           const workExperiences = await new WorkExperienceRepo().retrieveByUserId(user_id);
     
           res.status(200).json({

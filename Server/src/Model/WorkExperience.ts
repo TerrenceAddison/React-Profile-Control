@@ -60,15 +60,13 @@ export class WorkExperience extends Model {
 
     @Column({
         field: WorkExperience.EXPERIENCE_COMPANY_LOGO,
-        type: DataType.STRING,
-        allowNull: false,
+        type: DataType.STRING(500000),
     })
     company_logo!: string;
 
     @Column({
         field: WorkExperience.EXPERIENCE_DESCRIPTION,
         type: DataType.TEXT,
-        allowNull: false,
     })
     description!: string;
 

@@ -4,15 +4,19 @@ import ProfileContent from './ProfileContent';
 import profilePic from './img/placeholder.jpg';
 import { Button, Container, Nav, Navbar } from 'react-bootstrap';
 import './ProfilePage.css'
+import api from "./api";
 
 interface ProfilePageState {
+  id? : number;
   name: string;
   age: number;
   profilePic: string;
   workExperiences: WorkExperience[];
+  new: boolean;
 }
 
 interface WorkExperience {
+  id? : number;
   startDate: string;
   endDate: string;
   jobTitle: string;
@@ -24,6 +28,7 @@ interface WorkExperience {
 class ProfilePage extends React.Component<{}, ProfilePageState> {
     constructor(props: {}) {
       super(props);
+      // sample data
       this.state = {
         name: 'John Doe',
         age: 30,
@@ -39,9 +44,47 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
               'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod enim sed eros ullamcorper tincidunt. Nulla facilisi. Proin interdum nulla et sapien accumsan, vel facilisis dolor tincidunt. Duis dapibus libero ut tellus malesuada tincidunt.',
           },
         ],
+        new: true,
       };
     }
   
+    componentDidMount() {
+      api.get('/profile').then((res) => {
+        const data = res.data.data;
+        console.log("data found");
+        console.log(data);
+        console.log(typeof(data));
+        if(data.length != 0) {
+          console.log("work experience");
+          this.setState({
+            id: data[0].id,
+            name: data[0].name,
+            age: data[0].age,
+            profilePic: data[0].profilePic,
+            workExperiences: data[0].workExperiences,
+            new: false,
+          });
+        }
+        else {
+          this.setState({
+            name: '',
+            age: 0,
+            profilePic: profilePic,
+            workExperiences: [
+              {
+                startDate: '',
+                endDate: '',
+                jobTitle: '',
+                company: '',
+                companyLogo: '',
+                jobDescription: '',
+              },
+            ],
+            new: true,
+          });
+        }
+      });
+    }
 
     saveProfile = () => {
       const { name, profilePic, age, workExperiences } = this.state;
@@ -51,8 +94,25 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
         age,
         workExperiences,
       };
-      // code to save profile data to database or API
-      console.log('Profile data saved:', profileData);
+      console.log(profileData);
+      if(this.state.new) {
+        for(let i = 0; i < workExperiences.length; i++) {
+          workExperiences[i].id = i+1;
+        }
+        api.post('/profile', profileData).then((res) => {
+          console.log(res);
+          this.setState({new: false, id: res.data.id}); 
+          window.alert("Profile saved successfully!");
+        });
+      }
+      else {
+        api.patch(`/profile/${this.state.id}`, profileData).then((res) => {
+          console.log(res);
+          window.alert("Profile saved successfully!");
+        });
+      }
+
+
     };
 
     handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {

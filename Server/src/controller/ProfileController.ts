@@ -1,22 +1,26 @@
 import {Request, Response} from "express";
 import { Profile } from "../Model/Profile";
 import { ProfileRepo } from "../repository/ProfileRepo";
+import {workExperienceConverterToDB , workExperienceConverterToUI } from "../helper/workExperienceConverter";
 
 class ProfileController {
     async create(req: Request, res: Response)
     {
         try{
-          console.log("create");
-          console.log(req.body);
+          console.log("controller");
             const new_profile = new Profile();
             new_profile.name = req.body.name;
             new_profile.age = req.body.age;
-            new_profile.profile_pic = req.body.profile_pic;
+            new_profile.profile_pic = req.body.profilePic;
 
-            await new ProfileRepo().save(new_profile);
+            const workExperiences = req.body.workExperiences;
+            new_profile.work_experiences = workExperienceConverterToDB(workExperiences);
+
+            const newId = await new ProfileRepo().save(new_profile);
             res.status(201).json({
                 status: "Created",
-                message: "Successfully Created Profile"
+                message: "Successfully Created Profile",
+                id: newId
             })
 
         } catch(err)
@@ -29,13 +33,18 @@ class ProfileController {
     }
     async update(req: Request, res: Response) {
         try {
+          console.log("update start");
           let id = parseInt(req.params["id"]);
           const new_profile = new Profile();
           new_profile.id = id;
           new_profile.name = req.body.name;
           new_profile.age = req.body.age;
-          new_profile.profile_pic = req.body.profile_pic;
+          new_profile.profile_pic = req.body.profilePic;
 
+          const workExperiences = req.body.workExperiences;
+          new_profile.work_experiences = workExperienceConverterToDB(workExperiences);
+
+          console.log("update part 2");
     
           await new ProfileRepo().update(new_profile);
     
@@ -90,11 +99,27 @@ class ProfileController {
     async findAll(req: Request, res: Response) {
         try {
           const profiles = await new ProfileRepo().retrieveAll();
-    
+          const translatedProfiles = profiles.map((profile:{
+            id: number;
+            name: string;
+            age: number;
+            profile_pic: string;
+            work_experiences: any;
+          }) => {
+            return {
+              id: profile.id,
+              name: profile.name,
+              age: profile.age,
+              profilePic: profile.profile_pic,
+              workExperiences: workExperienceConverterToUI(profile.work_experiences),
+            };
+          });
+          console.log("find all");
+          console.log(profiles);
           res.status(200).json({
             status: "Ok!",
             message: "Successfully fetched all Profile data!",
-            data: profiles,
+            data: translatedProfiles,
           });
         } catch (err) {
           res.status(500).json({
