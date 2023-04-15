@@ -5,6 +5,7 @@ import profilePic from './img/placeholder.jpg';
 import { Button, Container, Form, Navbar } from 'react-bootstrap';
 import './ProfilePage.css'
 import api from "./api";
+const fetch = require('node-fetch');
 
 interface ProfilePageState {
   id? : number;
@@ -18,11 +19,12 @@ interface ProfilePageState {
 interface WorkExperience {
   id? : number;
   startDate: string;
-  endDate: string;
+  endDate: string | null;
   jobTitle: string;
   company: string;
   companyLogo: string;
   jobDescription: string;
+  isCurrent: boolean;
 }
 
 class ProfilePage extends React.Component<{}, ProfilePageState> {
@@ -42,8 +44,8 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
             jobTitle: '',
             company: '',
             companyLogo: '',
-            jobDescription:
-              '',
+            jobDescription:'',
+            isCurrent: false,
           },
         ],
         new: true,
@@ -62,7 +64,17 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
     }
 
     componentDidMount() {
-      const isOnline = navigator.onLine;
+      let isOnline = navigator.onLine;
+      if (isOnline) {
+          fetch('https://www.google.com/', { // Check for internet connectivity
+              mode: 'no-cors',
+              })
+          .then(() => {
+          }).catch(() => {
+            isOnline = false;
+          }  )
+  
+      }
       if(isOnline)
       {
         api.get('/profile').then((res) => {
@@ -76,6 +88,11 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
             this.setState({new: false});
             if(taken) return;
 
+            for(const element of data[0].workExperiences) {
+              if(element.endDate === null){
+                element.isCurrent = true;
+              }
+            }
             this.setState({
               id: data[0].id,
               name: data[0].name,
@@ -102,6 +119,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
                   company: '',
                   companyLogo: '',
                   jobDescription: '',
+                  isCurrent: false,
                 },
               ],
               new: true,
@@ -127,7 +145,16 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
         event.stopPropagation();
       }
       else{
-        const isOnline = navigator.onLine;
+        let isOnline = navigator.onLine;
+        if (isOnline) {
+            fetch('https://www.google.com/', { // Check for internet connectivity
+                mode: 'no-cors',
+                })
+            .then(() => {
+            }).catch(() => {
+              isOnline = false;
+            }  )
+        }
         if(isOnline){
           const { name, profilePic, age, workExperiences } = this.state;
           const profileData = {
@@ -142,7 +169,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
             }
             api.post('/profile', profileData).then((res) => {
               this.setState({new: false, id: res.data.id}); 
-              if(res.data.status === 201)
+              if(res.status === 201)
               {
                 window.alert("Profile created successfully!");
               }
@@ -153,8 +180,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
           }
           else {
             api.patch(`/profile/${this.state.id}`, profileData).then((res) => {
-  
-              if(res.data.status === 200)
+              if(res.status === 200)
               {
                 window.alert("Profile updated successfully!");
               }
@@ -175,7 +201,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
   areDatesValid = () => {
     let isDatesValid = true;
     this.state.workExperiences.forEach((experience, index) => {
-      if (experience.startDate > experience.endDate) {
+      if (experience.endDate !== null && experience.startDate > experience.endDate) {
         isDatesValid = false;
       }
     });
@@ -220,6 +246,20 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
       };
       this.setState({ workExperiences: newWorkExperiences });
     };
+
+    handleCheckedChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
+      const newWorkExperiences = [...this.state.workExperiences];
+      const newDate = new Date(newWorkExperiences[index].startDate);
+      newDate.setDate(newDate.getDate() + 1);  
+      const newEndDate = (isNaN(newDate.getTime()) ? '' : newDate.toISOString().slice(0, 10));
+
+      newWorkExperiences[index] = {
+        ...newWorkExperiences[index],
+        isCurrent: event.target.checked,
+        endDate: event.target.checked ? null : newEndDate,
+      };
+      this.setState({ workExperiences: newWorkExperiences });
+    }
 
     handleJobTitleChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
       const newWorkExperiences = [...this.state.workExperiences];
@@ -272,6 +312,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
             company: "",
             companyLogo: "",
             jobDescription: "",
+            isCurrent: false,
           },
         ];
         this.setState({ workExperiences: newWorkExperiences });
@@ -310,6 +351,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
               handleJobDescriptionChange={this.handleJobDescriptionChange}
               handleAddWorkExperience={this.handleAddWorkExperience}
               handleRemoveWorkExperience={this.handleRemoveWorkExperience}
+              handleCheckedChange={this.handleCheckedChange}
             />
             <Button className="save-btn" type="submit" variant="primary">Save Profile</Button>
           </Form>

@@ -157,6 +157,27 @@ describe(' Handle Changes and Functions', () => {
     expect(endDateInput).toHaveValue('2022-12-31');
   });
 
+  it('should update the isCurrent state and endDate state when the checkbox is checked', () => {
+    const { getByLabelText } = render(<ProfilePage />);
+    const checkboxInput = getByLabelText(/Current Job:/i);
+    fireEvent.click(checkboxInput);
+
+    expect(checkboxInput).toBeChecked();
+
+    const endDateInput = getByLabelText(/End Date:/i);
+    expect(endDateInput).toHaveValue('');
+    expect(endDateInput).toHaveAttribute('disabled');
+
+    fireEvent.change(endDateInput, { target: { value: '2022-12-31' } });
+    expect(endDateInput).toHaveValue('2022-12-31');
+
+    fireEvent.click(checkboxInput);
+    expect(checkboxInput).not.toBeChecked();
+    expect(checkboxInput).not.toHaveAttribute('disabled');
+
+    expect(endDateInput).toHaveValue('');
+  });
+
   it('should update the job title state when the input value changes', () => {
     const { getByLabelText } = render(<ProfilePage />);
     const jobTitleInput = getByLabelText(/Job Title:/i);

@@ -35,7 +35,7 @@ export const workExperienceConverterToUI = (work_experiences: any) => {
     return {
       id: experience.id,
       startDate: new Date(experience.start_date).toISOString().slice(0, 10),
-      endDate: new Date(experience.end_date).toISOString().slice(0, 10),
+      endDate: experience.end_date === null ? null : new Date(experience.end_date).toISOString().slice(0, 10),
       jobTitle: experience.job_title,
       company: experience.company,
       companyLogo: experience.company_logo,

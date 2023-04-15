@@ -3,14 +3,16 @@ import { Form, Button, Col, Row } from 'react-bootstrap';
 import './WorkExperienceItem.css'
 interface WorkExperience {
   startDate: string;
-  endDate: string;
+  endDate: string | null;
   jobTitle: string;
   company: string;
   companyLogo: string;
   jobDescription: string;
+  isCurrent: boolean;
 }
 
 interface WorkExperienceProps {
+  workExperiences: WorkExperience[];
   experience: WorkExperience;
   index: number;
   handleStartDateChange: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
@@ -20,11 +22,15 @@ interface WorkExperienceProps {
   handleCompanyLogoChange: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
   handleJobDescriptionChange: (event: ChangeEvent<HTMLTextAreaElement>, index: number) => void;
   handleRemoveWorkExperience: (index: number) => void;
+  handleCheckedChange: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
 }
 
 class WorkExperienceItem extends React.Component<WorkExperienceProps> {
+
+
     render() {
         const {
+            workExperiences,
             experience,
             index,
             handleStartDateChange,
@@ -33,7 +39,8 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
             handleCompanyChange,
             handleCompanyLogoChange,
             handleJobDescriptionChange,
-            handleRemoveWorkExperience
+            handleRemoveWorkExperience,
+            handleCheckedChange
           } = this.props;
 
           return(
@@ -62,7 +69,7 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
                   value={experience.startDate}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => handleStartDateChange(event, index)}
                   required
-                  isInvalid={experience.startDate > experience.endDate}
+                  isInvalid={experience.endDate ? experience.startDate > experience.endDate : false}
                 />
                 <Form.Control.Feedback type="invalid">Start Date must be before End Date</Form.Control.Feedback>
               </Col>
@@ -72,12 +79,23 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
                   type="date"
                   id={`end-date-${index}`}
                   name={`end-date-${index}`}
-                  value={experience.endDate}
+                  value={experience.endDate === null ? '' : experience.endDate}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => handleEndDateChange(event, index)}
                   required
-                  isInvalid={experience.endDate < experience.startDate}
+                  disabled={experience.isCurrent}
+                  isInvalid={experience.endDate ? experience.endDate < experience.startDate : false}
+
                   />
                 <Form.Control.Feedback type="invalid">End Date must be after Start Date</Form.Control.Feedback>
+                <Form.Label htmlFor={`is-current-${index}`}>Current Job: </Form.Label>
+                <Form.Check
+                  type="checkbox"
+                  id={`is-current-${index}`}
+                  name={`is-current-${index}`}
+                  checked={experience.isCurrent}
+                  disabled={workExperiences.some((exp, i) => i !== index && exp.isCurrent)}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => handleCheckedChange(event, index)}
+                  />
               </Col>
             </Row>
             <Row>
@@ -114,7 +132,7 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
                   id={`company-logo-${index}`}
                   name={`company-logo-${index}`}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => handleCompanyLogoChange(event, index)}
-                  required
+                  { ...(experience.companyLogo ? {} : {required: true}) }
                     isInvalid={experience.companyLogo === ''}
                   />
                 {experience.companyLogo && (

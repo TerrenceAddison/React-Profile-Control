@@ -6,11 +6,12 @@ import './ProfileContent.css';
 
 interface WorkExperience {
     startDate: string;
-    endDate: string;
+    endDate: string | null;
     jobTitle: string;
     company: string;
     companyLogo: string;
     jobDescription: string;
+    isCurrent: boolean;
   }
   
   interface ProfileContentProps {
@@ -23,6 +24,7 @@ interface WorkExperience {
     handleJobDescriptionChange: (event: ChangeEvent<HTMLTextAreaElement>, index: number) => void;
     handleRemoveWorkExperience: (index: number) => void;
     handleAddWorkExperience: () => void;
+    handleCheckedChange: (event: ChangeEvent<HTMLInputElement>, index: number) => void;
   }
 
 class ProfileContent extends React.Component<ProfileContentProps> {
@@ -45,6 +47,7 @@ class ProfileContent extends React.Component<ProfileContentProps> {
                 {workExperiences.map((experience, index) => (
                   <WorkExperienceItem
                     index={index}
+                    workExperiences={workExperiences}
                     experience={experience}
                     handleStartDateChange={handleStartDateChange}
                     handleEndDateChange={handleEndDateChange}
@@ -53,6 +56,7 @@ class ProfileContent extends React.Component<ProfileContentProps> {
                     handleCompanyLogoChange={handleCompanyLogoChange}
                     handleJobDescriptionChange={handleJobDescriptionChange}
                     handleRemoveWorkExperience={handleRemoveWorkExperience}
+                    handleCheckedChange={this.props.handleCheckedChange}
                   />
                 ))}
               <Button variant="secondary" onClick={handleAddWorkExperience}>
