@@ -1,8 +1,8 @@
-import React, { ChangeEvent, useRef } from 'react';
+import React, { ChangeEvent } from 'react';
 import ProfileHeader from './ProfileHeader';
 import ProfileContent from './ProfileContent';
 import profilePic from './img/placeholder.jpg';
-import { Button, Container, Form, Nav, Navbar } from 'react-bootstrap';
+import { Button, Container, Form, Navbar } from 'react-bootstrap';
 import './ProfilePage.css'
 import api from "./api";
 
@@ -56,8 +56,8 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
         console.log("data found");
         console.log(data);
         console.log(typeof(data));
-        if(data.length != 0) {
-          console.log("work experience");
+        if(data.length !== 0) {
+          console.log("work experience found");
           this.setState({
             id: data[0].id,
             name: data[0].name,
@@ -65,7 +65,9 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
             profilePic: data[0].profilePic,
             workExperiences: data[0].workExperiences,
             new: false,
-          });
+          },
+          () => {
+            console.log('new updated:', this.state.new);});
         }
         else {
           this.setState({
@@ -96,6 +98,8 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
         event.stopPropagation();
       }
       else{
+        console.log("save profile called");
+        console.log(this.state.new);
         const { name, profilePic, age, workExperiences } = this.state;
         const profileData = {
           name,
@@ -111,13 +115,29 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
           api.post('/profile', profileData).then((res) => {
             console.log(res);
             this.setState({new: false, id: res.data.id}); 
-            window.alert("Profile saved successfully!");
+            if(res.data.status === 201)
+            {
+              window.alert("Profile created successfully!");
+            }
+            else{
+              window.alert("Failed to create profile!");
+            }
           });
         }
         else {
+          console.log('patch url is', `/profile/${this.state.id}`);
           api.patch(`/profile/${this.state.id}`, profileData).then((res) => {
             console.log(res);
-            window.alert("Profile saved successfully!");
+            console.log(res.data);
+            console.log(res.data.status);
+
+            if(res.data.status === 200)
+            {
+              window.alert("Profile updated successfully!");
+            }
+            else{
+              window.alert("Failed to update profile!");
+            }
           });
         }
       }
@@ -127,8 +147,6 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
   areDatesValid = () => {
     let isDatesValid = true;
     this.state.workExperiences.forEach((experience, index) => {
-      const startDateControl = document.getElementById(`start-date-${index}`);
-      const endDateControl = document.getElementById(`end-date-${index}`);
       if (experience.startDate > experience.endDate) {
         isDatesValid = false;
       }
@@ -240,7 +258,7 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
       render() {
         const { name, age, profilePic, workExperiences } = this.state;
         return (
-          <Form ref={this.formRef} onSubmit={this.saveProfile.bind(this)}>
+          <Form ref={this.formRef} onSubmit={this.saveProfile.bind(this)} data-testid="profile-form">
             <Navbar bg="dark">
               <Container>
                 <Navbar.Brand><h1 className = "navbar-txt">Profile Page</h1></Navbar.Brand>

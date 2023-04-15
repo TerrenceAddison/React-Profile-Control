@@ -21,7 +21,7 @@ class ProfileHeader extends React.Component<ProfileHeaderProps, {}> {
     const { profilePic, name, age, handleNameChange, handleAgeChange, handleProfilePicChange } = this.props;
 
     return (
-      <div className="profile-header">
+      <div className="profile-header" data-testid="profile-header">
         <div className="profile-avatar">
           <div className="avatar-wrapper">
             <Form.Label htmlFor="profilePic">

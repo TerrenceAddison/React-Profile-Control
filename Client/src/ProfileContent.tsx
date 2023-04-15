@@ -40,7 +40,7 @@ class ProfileContent extends React.Component<ProfileContentProps> {
           } = this.props;
 
           return (
-            <div className="profile-content">
+            <div className="profile-content" data-testid="profile-content">
               <h2>Work Experiences</h2>
                 {workExperiences.map((experience, index) => (
                   <WorkExperienceItem
