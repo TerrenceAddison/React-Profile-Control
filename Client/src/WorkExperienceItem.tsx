@@ -37,7 +37,7 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
           } = this.props;
 
           return(
-            <div key={index} className="work-experience">
+            <div key={index} className="work-experience" data-testid="work-experience-form">
             <Row>
               <Col>
                 <Form.Label htmlFor={`job-title-${index}`}>Job Title: </Form.Label>
@@ -102,6 +102,8 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
                     value={experience.jobDescription}
                     className='job-description-textarea'
                     onChange={(event: ChangeEvent<HTMLTextAreaElement>) => handleJobDescriptionChange(event, index)}
+                    required
+                    isInvalid={experience.jobDescription === ''}
                     />
               </Col>
               <Col>
@@ -112,6 +114,8 @@ class WorkExperienceItem extends React.Component<WorkExperienceProps> {
                   id={`company-logo-${index}`}
                   name={`company-logo-${index}`}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => handleCompanyLogoChange(event, index)}
+                  required
+                    isInvalid={experience.companyLogo === ''}
                   />
                 {experience.companyLogo && (
                   <div className="company-logo">

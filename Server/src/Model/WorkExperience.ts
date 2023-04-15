@@ -40,7 +40,6 @@ export class WorkExperience extends Model {
     @Column({
         field: WorkExperience.EXPERIENCE_END_DATE,
         type: DataType.DATE,
-        allowNull: false,
     })
     end_date!: Date;
 
@@ -61,12 +60,14 @@ export class WorkExperience extends Model {
     @Column({
         field: WorkExperience.EXPERIENCE_COMPANY_LOGO,
         type: DataType.STRING(500000),
+        allowNull: false,
     })
     company_logo!: string;
 
     @Column({
         field: WorkExperience.EXPERIENCE_DESCRIPTION,
         type: DataType.TEXT,
+        allowNull: false,
     })
     description!: string;
 
