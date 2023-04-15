@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import WorkExperienceItem from './WorkExperienceItem';
 import './ProfileContent.css';
 

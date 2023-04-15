@@ -32,114 +32,142 @@ class ProfilePage extends React.Component<{}, ProfilePageState> {
       this.formRef = React.createRef();
       // sample data
       this.state = {
-        name: 'John Doe',
-        age: 30,
+        name: '',
+        age: 0,
         profilePic: profilePic,
         workExperiences: [
           {
-            startDate: '2020-01-01',
-            endDate: '2021-01-01',
-            jobTitle: 'Software Engineer',
-            company: 'Acme Inc.',
+            startDate: '',
+            endDate: '',
+            jobTitle: '',
+            company: '',
             companyLogo: '',
             jobDescription:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod enim sed eros ullamcorper tincidunt. Nulla facilisi. Proin interdum nulla et sapien accumsan, vel facilisis dolor tincidunt. Duis dapibus libero ut tellus malesuada tincidunt.',
+              '',
           },
         ],
         new: true,
       };
     }
   
+    takeDataFromStorage() : boolean {
+      const profileData = localStorage.getItem('profileData');
+      if (profileData) {
+        const data = JSON.parse(profileData);
+        this.setState(data);
+        localStorage.clear();
+        return true;
+      }
+      return false;
+    }
+
     componentDidMount() {
-      api.get('/profile').then((res) => {
-        const data = res.data.data;
-        console.log("data found");
-        console.log(data);
-        console.log(typeof(data));
-        if(data.length !== 0) {
-          console.log("work experience found");
-          this.setState({
-            id: data[0].id,
-            name: data[0].name,
-            age: data[0].age,
-            profilePic: data[0].profilePic,
-            workExperiences: data[0].workExperiences,
-            new: false,
-          },
-          () => {
-            console.log('new updated:', this.state.new);});
+      const isOnline = navigator.onLine;
+      if(isOnline)
+      {
+        api.get('/profile').then((res) => {
+          
+
+          const data = res.data.data;
+          if(data.length !== 0) {
+
+            // stored data takes precedence
+            const taken = this.takeDataFromStorage();
+            this.setState({new: false});
+            if(taken) return;
+
+            this.setState({
+              id: data[0].id,
+              name: data[0].name,
+              age: data[0].age,
+              profilePic: data[0].profilePic,
+              workExperiences: data[0].workExperiences,
+              new: false,
+            });
+          }
+          else {
+            // stored data takes precedence
+            const taken = this.takeDataFromStorage();
+            this.setState({new: true});
+            if(taken) return;
+            this.setState({
+              name: '',
+              age: 0,
+              profilePic: profilePic,
+              workExperiences: [
+                {
+                  startDate: '',
+                  endDate: '',
+                  jobTitle: '',
+                  company: '',
+                  companyLogo: '',
+                  jobDescription: '',
+                },
+              ],
+              new: true,
+            });
+          }
+        });
+      }
+      else
+      {
+        const profileData = localStorage.getItem('profileData');
+        if (profileData) {
+          const data = JSON.parse(profileData);
+          this.setState(data);
+          localStorage.clear();
         }
-        else {
-          this.setState({
-            name: '',
-            age: 0,
-            profilePic: profilePic,
-            workExperiences: [
-              {
-                startDate: '',
-                endDate: '',
-                jobTitle: '',
-                company: '',
-                companyLogo: '',
-                jobDescription: '',
-              },
-            ],
-            new: true,
-          });
-        }
-      });
+      }
     }
 
     saveProfile = (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const isValid = this.areDatesValid();
       if (!isValid) {
-        console.log("invalid form");
         event.stopPropagation();
       }
       else{
-        console.log("save profile called");
-        console.log(this.state.new);
-        const { name, profilePic, age, workExperiences } = this.state;
-        const profileData = {
-          name,
-          profilePic,
-          age,
-          workExperiences,
-        };
-        console.log(profileData);
-        if(this.state.new) {
-          for(let i = 0; i < workExperiences.length; i++) {
-            workExperiences[i].id = i+1;
+        const isOnline = navigator.onLine;
+        if(isOnline){
+          const { name, profilePic, age, workExperiences } = this.state;
+          const profileData = {
+            name,
+            profilePic,
+            age,
+            workExperiences,
+          };
+          if(this.state.new) {
+            for(let i = 0; i < workExperiences.length; i++) {
+              workExperiences[i].id = i+1;
+            }
+            api.post('/profile', profileData).then((res) => {
+              this.setState({new: false, id: res.data.id}); 
+              if(res.data.status === 201)
+              {
+                window.alert("Profile created successfully!");
+              }
+              else{
+                window.alert("Failed to create profile!");
+              }
+            });
           }
-          api.post('/profile', profileData).then((res) => {
-            console.log(res);
-            this.setState({new: false, id: res.data.id}); 
-            if(res.data.status === 201)
-            {
-              window.alert("Profile created successfully!");
-            }
-            else{
-              window.alert("Failed to create profile!");
-            }
-          });
+          else {
+            api.patch(`/profile/${this.state.id}`, profileData).then((res) => {
+  
+              if(res.data.status === 200)
+              {
+                window.alert("Profile updated successfully!");
+              }
+              else{
+                window.alert("Failed to update profile!");
+              }
+            });
+          }
         }
         else {
-          console.log('patch url is', `/profile/${this.state.id}`);
-          api.patch(`/profile/${this.state.id}`, profileData).then((res) => {
-            console.log(res);
-            console.log(res.data);
-            console.log(res.data.status);
-
-            if(res.data.status === 200)
-            {
-              window.alert("Profile updated successfully!");
-            }
-            else{
-              window.alert("Failed to update profile!");
-            }
-          });
+          localStorage.setItem('profileData', JSON.stringify(this.state));
         }
+
       }
     };
 

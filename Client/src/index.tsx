@@ -5,10 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.REACT_APP_NODE_ENV === 'development') {
   const { worker } = require('./mocks/browser')
   worker.start()
-  console.log(process.env);
 }
 
 const root = ReactDOM.createRoot(

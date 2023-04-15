@@ -7,7 +7,6 @@ class ProfileController {
     async create(req: Request, res: Response)
     {
         try{
-          console.log("controller");
             const new_profile = new Profile();
             new_profile.name = req.body.name;
             new_profile.age = req.body.age;
@@ -33,7 +32,6 @@ class ProfileController {
     }
     async update(req: Request, res: Response) {
         try {
-          console.log("update start");
           let id = parseInt(req.params["id"]);
           const new_profile = new Profile();
           new_profile.id = id;
@@ -44,7 +42,6 @@ class ProfileController {
           const workExperiences = req.body.workExperiences;
           new_profile.work_experiences = workExperienceConverterToDB(workExperiences);
 
-          console.log("update part 2");
     
           await new ProfileRepo().update(new_profile);
     
@@ -114,8 +111,6 @@ class ProfileController {
               workExperiences: workExperienceConverterToUI(profile.work_experiences),
             };
           });
-          console.log("find all");
-          console.log(profiles);
           res.status(200).json({
             status: "Ok!",
             message: "Successfully fetched all Profile data!",

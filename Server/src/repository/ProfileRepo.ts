@@ -13,18 +13,14 @@ interface IProfileRepo{
 export class ProfileRepo implements IProfileRepo {
     async save(profile: Profile): Promise<number> {
         try{
-            console.log("profile repo");
             const createdProfile = await Profile.create({
                     name: profile.name,
                     age: profile.age,
                     profile_pic: profile.profile_pic
                 });
-            console.log("profile done");
             if(profile.work_experiences.length > 0)
             {
-                console.log("work exp start");
                 for (const workExp of profile.work_experiences) {
-                    console.log(workExp);
                     await WorkExperience.create({
                         user_id: createdProfile.id,
                         start_date: workExp.start_date,
@@ -39,21 +35,17 @@ export class ProfileRepo implements IProfileRepo {
             
             return createdProfile.id;
         }catch(err){
-            console.log("profile repo error");
-            console.log(err);
             throw err;
         }
     }
     async update(profile: Profile): Promise<void> {
         try{
-            console.log("repo update start");
             const new_profile = await Profile.findOne({
                 where: {
                     id: profile.id
                 }
             });
             
-            console.log("repo got new_profile");
             if(!new_profile) throw new Error("Profile not found");
 
             new_profile.name = profile.name;
@@ -61,32 +53,24 @@ export class ProfileRepo implements IProfileRepo {
             new_profile.profile_pic = profile.profile_pic;
             await new_profile.save();
 
-            console.log("new profile saved");
             await WorkExperience.findAll({
                 where: {
                     user_id: profile.id
                 }
             }).then(async (workExps) => {
-                console.log("await done");
-                console.log(workExps);
                 if(workExps.length === 0) return;
-                console.log("did not return");
-                console.log(profile.work_experiences);
-                console.log(workExps);
                 const notFoundWorkExperience = workExps.filter((workExp) => {
                     return !profile.work_experiences.find((new_workExp) => {
                         return new_workExp.id === workExp.id;
                     });
                 });
                 for(const workExp of notFoundWorkExperience){
-                    console.log("destroy triggered");
                     await workExp.destroy();
                 }
             });
             for (const workExp of profile.work_experiences) {
                 if (workExp.id === undefined)
                 {
-                    console.log("work exp undefined");
                     await WorkExperience.create({
                         user_id: profile.id,
                         start_date: workExp.start_date,
@@ -98,7 +82,6 @@ export class ProfileRepo implements IProfileRepo {
                     });
                 }
                 else{
-                    console.log("update work exp");
                     const new_workExp = await WorkExperience.findOne({
                         where: {
                             id: workExp.id
@@ -116,7 +99,6 @@ export class ProfileRepo implements IProfileRepo {
 
             }
         }catch(err){
-            console.log(err);
             throw err;
         }
     }

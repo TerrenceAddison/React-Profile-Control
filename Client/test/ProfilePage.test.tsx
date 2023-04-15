@@ -80,5 +80,14 @@ describe('ProfilePage API Calls', () => {
       const nameInput = screen.getByRole('textbox', { name: /Name:/i }) as HTMLInputElement;
       expect(nameInput.value).toEqual('John Doe');
     });
+    // it('should call the saveProfile function ', async () => {
+    //     const mockAlert = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    //     render(<ProfilePage />);
+    //     await waitFor(() => screen.getByRole('textbox', { name: /Name:/i }));
+    //     fireEvent.submit(screen.getByTestId('profile-form'));
+
+    //     await waitFor(() => expect(mockAlert).toHaveBeenCalledWith('Profile updated successfully'));
+    //     mockAlert.mockRestore();
+    //   });  
 });
 
