@@ -23,6 +23,9 @@ export const workExperienceConverterToDB = (workExperiences: any) => {
 }
 
 export const workExperienceConverterToUI = (work_experiences: any) => {
+  if (!work_experiences) {
+    return [];
+  }
   const translatedExperiences = work_experiences.map((experience: {
     id: number,
     start_date: string,

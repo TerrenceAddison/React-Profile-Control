@@ -65,12 +65,12 @@ class ProfileController {
       
             res.status(200).json({
               status: "Ok!",
-              message: "Successfully deleted work experience!",
+              message: "Successfully deleted profile!",
             });
           } catch (err) {
             res.status(500).json({
               status: "Internal Server Error!",
-              message: "Internal Server Error!",
+              message: "Failed to delete profile",
             });
           }
     }
@@ -82,13 +82,13 @@ class ProfileController {
     
           res.status(200).json({
             status: "Ok!",
-            message: "Successfully fetched work experience by id!",
+            message: "Successfully fetched profile by id!",
             data: new_profile,
           });
         } catch (err) {
           res.status(500).json({
             status: "Internal Server Error!",
-            message: "Internal Server Error!",
+            message: "Profile not found",
           });
         }
     }
